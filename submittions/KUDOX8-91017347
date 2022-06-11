@@ -1,0 +1,146 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class second_level {
+    public static void main(String[] args) throws Exception {
+
+        String start = "";
+        String dest = "";
+        int n;
+        int m;
+        int charInInteger = Character.valueOf('A');
+        String maximumLetter;
+        String minimumLetter = "@";
+
+
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Enter n value: ");
+        n = kb.nextInt();
+        kb.nextLine();
+        System.out.print("Enter m value: ");
+        m = kb.nextInt();
+        kb.nextLine();
+        System.out.print("Enter the start's cordinate: ");
+        start = kb.nextLine().toUpperCase();
+        System.out.print("Enter the destenation's cordinate: ");
+        dest = kb.nextLine().toUpperCase();
+
+        if (start.equals(dest)) {
+            System.out.println("[\"" + start + "\"]");
+            System.exit(0);
+        }
+
+        maximumLetter = Character.toString(charInInteger + n);
+     
+
+        String startCol = start.charAt(0) + "";
+        int startRow = Integer.parseInt(start.substring(1));
+        String destCol = dest.charAt(0) + "";
+        int destRow = Integer.parseInt(dest.substring(1));
+        List<String> startAlter = new ArrayList<>();
+        List<String> destAlter = new ArrayList<>();
+
+        // Top Right Diagonal
+        while (!startCol.equals(maximumLetter) && startRow != m + 1) {
+            startAlter.add(startCol + startRow);
+            startCol = Character.toString(startCol.charAt(0) + 1);
+            startRow++;
+
+        }
+
+        // Top Left Diagonal
+        startCol = Character.toString(start.charAt(0) - 1);
+        startRow = Integer.parseInt(start.substring(1)) + 1;
+
+        while (!startCol.equals(minimumLetter) && startRow != m + 1) {
+
+            startAlter.add(startCol + startRow);
+            startCol = Character.toString(startCol.charAt(0) - 1);
+            startRow++;
+
+        }
+
+        // Bottom Right Diagonal
+        startCol = Character.toString(start.charAt(0) + 1);
+        startRow = Integer.parseInt(start.substring(1) + "") - 1;
+
+        while (!startCol.equals(maximumLetter) && startRow != 0) {
+            startAlter.add(startCol + startRow);
+            startCol = Character.toString(startCol.charAt(0) + 1);
+            startRow--;
+
+        }
+
+        // Bottom Left Diagonal
+        startCol = Character.toString(start.charAt(0) - 1);
+        startRow = Integer.parseInt(start.substring(1)) - 1;
+
+        while (!startCol.equals(minimumLetter) && startRow != 0) {
+            startAlter.add(startCol + startRow);
+            startCol = Character.toString(startCol.charAt(0) - 1);
+            startRow--;
+
+        }
+
+        if (startAlter.contains(dest)) {
+            System.out.println("[\"" + start + ",\"" + dest + "\"]");
+            System.exit(0);
+        }
+
+        ////////////////////////////////////////////////////
+
+        // Top Right Diagonal
+        while (!destCol.equals(maximumLetter) && destRow != m + 1) {
+            destAlter.add(destCol + destRow);
+            destCol = Character.toString(destCol.charAt(0) + 1);
+            destRow++;
+
+        }
+
+        // Top Left Diagonal
+        destCol = Character.toString(dest.charAt(0) - 1);
+        destRow = Integer.parseInt(dest.substring(1)) + 1;
+
+        while (!destCol.equals(minimumLetter) && destRow != m + 1) {
+            destAlter.add(destCol + destRow);
+            destCol = Character.toString(destCol.charAt(0) - 1);
+            destRow++;
+
+        }
+
+        // Bottom Right Diagonal
+        destCol = Character.toString(dest.charAt(0) + 1);
+        destRow = Integer.parseInt(dest.substring(1)) - 1;
+
+        while (!destCol.equals(maximumLetter) && destRow != 0) {
+            destAlter.add(destCol + destRow);
+            destCol = Character.toString(destCol.charAt(0) + 1);
+            destRow--;
+
+        }
+
+        // Bottom Left Digonal
+        destCol = Character.toString(dest.charAt(0) - 1);
+        destRow = Integer.parseInt(dest.substring(1)) - 1;
+
+        while (!destCol.equals(minimumLetter) && destRow != 0) {
+            destAlter.add(destCol + destRow);
+            destCol = Character.toString(destCol.charAt(0) - 1);
+            destRow--;
+
+        }
+
+        for (String middle : destAlter) {
+            if (startAlter.contains(middle)) {
+                System.out.println("[\"" + start + "\",\"" + middle + "\",\"" + dest + "\"]");
+                System.exit(0);
+            }
+
+        }
+        System.out.println("Error: Enter valid inputs");
+
+        kb.close();
+    }
+
+}

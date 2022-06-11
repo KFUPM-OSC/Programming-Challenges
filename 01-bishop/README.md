@@ -73,7 +73,7 @@ public String[] getBishopPath (Integer n, Integer m, String start, String dest, 
 
 We will be using GitHub for submitting Challenges solutions, to submit a new solution:
 
-1. Go to [https://kfu.pm/challenge/01-bishop](https://kfu.pm/challenge/01-bishop).
+1. Go to [https://kfu.pm/submit/01-bishop](https://kfu.pm/submit/01-bishop).
 2. Login using your github account.
 3. Write your solution using any programming language (Pseudo-code is accepted).
 4. Commit your solution.

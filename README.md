@@ -13,7 +13,8 @@ For a regular chessboard of size 8×8. The columns are labelled (’A’ to ’H
 /**
  * @param {String} start - The starting coordinate of the Bishop piece.
  * @param {String} dest - The destination coordinate of the Bishop piece.
- * @return {String[]} path - If possible, a valid path that Bishop piece can take in order to reach the destination coordinate.
+ * @return {String[]} path - If possible, a valid path that Bishop piece can
+ *                           take in order to reach the destination coordinate.
  */
 public String[] getBishopPath (String start, String dest) {
 
@@ -36,7 +37,8 @@ For any arbitrary chessboard of size n×m, where n ≤ 26 and m ≤ 26.
  * @param {Integer} m - The number of rows of the chessboard.
  * @param {String} start - The starting coordinate of the Bishop piece.
  * @param {String} dest - The destination coordinate of the Bishop piece.
- * @return {String[]} path - If possible, a valid path that Bishop piece can take in order to reach the destination coordinate.
+ * @return {String[]} path - If possible, a valid path that Bishop piece can
+ *                           take in order to reach the destination coordinate.
  */
 public String[] getBishopPath (Integer n, Integer m, String start, String dest) {
 
@@ -60,7 +62,8 @@ For any arbitrary chessboard of size n×m, where n ≤ 26 and m ≤ 26. and a pa
  * @param {String} start - The starting coordinate of the Bishop piece.
  * @param {String} dest - The destination coordinate of the Bishop piece.
  * @param {String} obstacle - The coordinate of an obstacle.
- * @return {String[]} path - If possible, a valid path that Bishop piece can take in order to reach the destination coordinate.
+ * @return {String[]} path - If possible, a valid path that Bishop piece can
+ *                           take in order to reach the destination coordinate.
  */
 public String[] getBishopPath (Integer n, Integer m, String start, String dest, String obstacle) {
 

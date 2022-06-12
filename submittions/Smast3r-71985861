@@ -1,0 +1,193 @@
+
+const convertLetter = (L)=>{
+    let N = 0 ; 
+    switch(L){
+        case "A": N =1
+        break;
+        case "B": N =2
+        break;
+        case "C": N =3
+        break;
+        case "D": N =4
+        break;
+        case "E": N =5
+        break;
+        case "F": N =6
+        break;
+        case "G": N =7
+        break;
+        case "H": N =8
+        break;
+        case "I": N =9
+        break;
+        case "J": N =10
+        break;
+        case "K": N =11
+        break;
+        case "L": N =12
+        break;
+        case "M": N =13
+        break;
+        case "N": N =14
+        break;
+        case "O": N =15
+        break;
+        case "P": N =16
+        break;
+        case "Q": N =17
+        break; 
+        case "R": N =18
+        break; 
+        case "S": N =19
+        break; 
+        case "T": N =20
+        break; 
+        case "U": N =21
+        break; 
+        case "V": N =22
+        break; 
+        case "W": N =23
+        break; 
+        case "X": N =24
+        break; 
+        case "Y": N =25
+        break; 
+        case "Z": N =26
+        break; 
+
+    }
+    return N
+}
+const convertN = (N)=>{
+    let L = '' ; 
+    switch(N){
+        case 1: L ="A"
+        break;
+        case 2: L ="B"
+        break;
+        case 3: L ="C"
+        break;
+        case 4: L ="D"
+        break;
+        case 5: L ="E"
+        break;
+        case 6: L ="F"
+        break;
+        case 7: L ="G"
+        break;
+        case 8: L ="H"
+        break;
+        case 9: L ="I"
+        break;
+        case 10: L ="J"
+        break;
+        case 11: L ="K"
+        break;
+        case 12: L ="L"
+        break;
+        case 13: L ="M"
+        break;
+        case 14: L ="N"
+        break;
+        case 15: L ="O"
+        break;
+        case 16: L ="P"
+        break;
+        case 17: L ="Q"
+        break; 
+        case 18: L ="R"
+        break; 
+        case 19: L ="S"
+        break; 
+        case 20: L ="T"
+        break; 
+        case 21: L ="U"
+        break; 
+        case 22: L ="V"
+        break; 
+        case 23: L ="W"
+        break; 
+        case 24: L ="X"
+        break; 
+        case 25: L ="Y"
+        break; 
+        case 26: L ="Z"
+        break; 
+
+    }
+    return L
+}
+
+
+const solver = (n,m,start,dest)=> { 
+        let path = [] 
+                            // n   , m
+        // the possitions = {colomn,Row}
+        const startingPossition = {colomn:convertLetter(start[0]), row:start.substring(1) -(0)}
+        const destPossition = {colomn:convertLetter(dest[0]),       row:dest.substring(1) -(0)} 
+
+        function findCommonParent(startingPossition,destPossition){
+            let startingDigonalPoints = []
+            let destDigonalPoints = []
+            
+            for(col=startingPossition.colomn,row=startingPossition.row;col<=n &&row<=m;col++,row++){
+            startingDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=startingPossition.colomn,row=startingPossition.row;col >=0 &&row>=0;col--,row--){
+            startingDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=startingPossition.colomn,row=startingPossition.row;col <=n && row>=0;col++,row--){
+            startingDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=startingPossition.colomn,row=startingPossition.row;col >=0 &&row<=m;col--,row++){
+            startingDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=destPossition.colomn,row=destPossition.row;col <=n &&row<=m;col++,row++){
+            destDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=destPossition.colomn,row=destPossition.row;col >=0 &&row>=0;col--,row--){
+            destDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=destPossition.colomn,row=destPossition.row;col <=n &&row>=0;col++,row--){
+            destDigonalPoints.push({colomn:col,row:row})
+            }
+
+            for(col=destPossition.colomn,row=destPossition.row;col >=0 &&row<=m;col--,row++){
+            destDigonalPoints.push({colomn:col,row:row})
+            }
+
+    
+            return intersection(destDigonalPoints,startingDigonalPoints)
+        } 
+        function intersection(A,B){
+            let common = [] ; 
+            A.forEach(element => {
+                B.forEach(secelem=>{
+                    if(element.colomn==secelem.colomn&&element.row==secelem.row)
+                        common.push({colomn:element.colomn,row:element.row})
+                })
+            });
+            return common
+        }
+        
+        let parent = findCommonParent(startingPossition,destPossition)
+        if((parent.row==startingPossition.row&&parent.colomn==startingPossition.colomn)||(parent.row==destPossition.row&&parent.colomn==destPossition.colomn))
+        return [startingPossition,parent] // it no need to take a turn 
+
+        path = [startingPossition,...parent,destPossition]
+        let solution = []
+        path.forEach(e=>{
+            let str = convertN(e.colomn).concat(e.row+'')
+            solution.push(str)
+        })
+        return solution.length>2?solution:"no solution"
+    }
+
+console.log(solver(26,26,"A1","G1"))
+

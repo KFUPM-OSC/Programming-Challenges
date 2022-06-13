@@ -9,9 +9,6 @@ import (
 )
 
 // Solution : Get all diagonal moves for each start and dest, the common element should be the solution
-//
-// 1 - 8
-// A - H
 
 func ConvertToNum(s string) int {
 	// 49 = 1, 65 = A -- subtract 16
@@ -41,11 +38,24 @@ func ConvertToChar(s int) string {
 	return string(byt[0] + 16)
 }
 
+type Point struct {
+	Current string
+}
+
+func (p *Point) getL() int {
+	return ConvertToNum(string(p.Current[0]))
+}
+
+func (p *Point) getN() int {
+	num, _ := strconv.Atoi(string(p.Current[1:]))
+	return num
+}
+
 func combine(s string, i int) string {
 	return (s + strconv.Itoa(i))
 }
 
-func GetDiagonalMoves(Current string, n, m int) []string {
+func GetDiagonalMoves(Current string, n, m int, obstacle string) []string {
 	letter := Current[0]
 	lnum := ConvertToNum(string(letter))
 	num, _ := strconv.Atoi(string(Current[1:]))
@@ -68,25 +78,11 @@ func GetDiagonalMoves(Current string, n, m int) []string {
 			} else {
 				i3 = num - i
 			}
-			if poss[currentc] == "F" {
-				if i2 > numOfC || i3 > numOfR {
-					break
-				}
-			} else if poss[currentc] == "S" {
-				if i2 > numOfC || i3 < 1 {
-					break
-				}
-			} else if poss[currentc] == "T" {
-				if i2 < 1 || i3 > numOfR {
-					break
-				}
-			} else if poss[currentc] == "R" {
-				if i2 < 1 || i3 < 1 {
-					break
-				}
+			if (i2 < 1 || i2 > numOfC) || (i3 > numOfR || i3 < 1) {
+				break
 			}
 			key := combine(ConvertToChar(i2), i3)
-			if !(strings.Contains(key, Current)) {
+			if !((strings.EqualFold(key, Current)) || (strings.EqualFold(key, obstacle))) {
 				possiblemoves = append(possiblemoves, key)
 			}
 		}
@@ -94,17 +90,23 @@ func GetDiagonalMoves(Current string, n, m int) []string {
 	return possiblemoves
 }
 
-func getBishopPath(n, m int, start, dest, obstacle string) []string {
-	mov1 := GetDiagonalMoves(start, n, m)
-	mov2 := GetDiagonalMoves(dest, n, m)
-	moves := []string{}
-	for i := range mov1 {
-		for j := range mov2 {
-			if mov1[i] == mov2[j] && (mov1[i] != obstacle || mov2[j] != obstacle) {
-				moves = append(moves, mov1[i])
+func findCommonElements(l1, l2 []string) []string {
+	ret := []string{}
+	for i := range l1 {
+		for j := range l2 {
+			if l1[i] == l2[j] {
+				ret = append(ret, l1[i])
 			}
 		}
 	}
+	return ret
+}
+
+func getBishopPath(n, m int, start, dest, obstacle string) []string {
+	mov1 := GetDiagonalMoves(start, n, m, obstacle)
+	mov2 := GetDiagonalMoves(dest, n, m, obstacle)
+	moves := findCommonElements(mov1, mov2)
+	// Easy level
 	if len(moves) > 1 {
 		rand.Seed(time.Now().UnixNano()) // for random
 		fmt.Printf("%v Possible moves %v\n", len(moves), moves)
@@ -112,29 +114,59 @@ func getBishopPath(n, m int, start, dest, obstacle string) []string {
 	} else if len(moves) == 1 {
 		return []string{start, moves[0], dest}
 	}
-	//if strings.Contains(strings.Join(mov1, " "), obstacle) {
+	//  End of easy level solution ^^
 	// we need to find a new path
-	// move to a place that is also diagonal with the dest
-	sol := func() []string {
-		for i := range mov1 {
-			if mov1[i] != obstacle {
-				another := GetDiagonalMoves(mov1[i], n, m)
-				for ix := range another {
-					for j := range mov2 {
-						if another[ix] == mov2[j] && (another[ix] != obstacle || mov2[j] != obstacle) && (another[ix] != start || mov2[j] != start) {
-							return []string{start, mov1[i], another[ix], dest}
-						}
+	// move to a Point that is also diagonal with the dest
+	// med & hard
+	// Solution: loop through all the diagonal places and check if it is leading to the destination
+	// Add the unexplored place and keep searching through its diagonals until we get to the destination or we lose track
+	sol := func() []Point {
+		sPoint := Point{Current: start}
+		explored := make(map[int]map[int]bool)
+		for i := 0; i < n+1; i++ {
+			explored[i] = make(map[int]bool)
+			for j := 0; j < m+1; j++ {
+				explored[i][j] = false
+			}
+		}
+		lis := make([][]Point, 0)
+		lis = append(lis, []Point{sPoint})
+		explored[sPoint.getL()][sPoint.getN()] = true
+		for len(lis) > 0 {
+			nPoint := lis[0]
+			currentp := nPoint[len(nPoint)-1]
+			lis = lis[1:]
+			mover := GetDiagonalMoves(currentp.Current, n, m, obstacle)
+			for k := range mover {
+				nnPoint := Point{Current: mover[k]}
+				if !(explored[nnPoint.getL()][nnPoint.getN()]) {
+					explored[nnPoint.getL()][nnPoint.getN()] = true
+					newPoint := nPoint
+					newPoint = append(newPoint, Point{Current: mover[k]})
+					if mover[k] == dest {
+						return newPoint
 					}
+					lis = append(lis, newPoint)
 				}
 			}
 		}
+		return nil
+	}
+	s := sol()
+	result := []string{}
+	for i := range s {
+		result = append(result, s[i].Current)
+	}
+	if len(result) == 0 {
 		return []string{"NON"}
 	}
-	return sol()
+	return result
 }
 
 func main() {
-	sol := getBishopPath(8, 8, "G1", "B2", "D4")
+	sol := getBishopPath(16, 14, "B1", "K14", "M12")
 	fmt.Println(sol)
 }
-// Output : [G1 H2 E5 B2]
+
+// OutPut := [B1 C2 A4 K14]
+// :=)

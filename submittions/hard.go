@@ -10,6 +10,8 @@ import (
 
 // Solution : Get all diagonal moves for each start and dest, the common element should be the solution
 
+
+// using ASCII to convert between chars and numbers
 func ConvertToNum(s string) int {
 	// 49 = 1, 65 = A -- subtract 16
 	byt := []rune(s)
@@ -82,7 +84,10 @@ func GetDiagonalMoves(Current string, n, m int, obstacle string) []string {
 				break
 			}
 			key := combine(ConvertToChar(i2), i3)
-			if !((strings.EqualFold(key, Current)) || (strings.EqualFold(key, obstacle))) {
+			if strings.EqualFold(key, obstacle) {
+				break
+			}
+			if !(strings.EqualFold(key, Current)) {
 				possiblemoves = append(possiblemoves, key)
 			}
 		}
@@ -141,7 +146,8 @@ func getBishopPath(n, m int, start, dest, obstacle string) []string {
 				nnPoint := Point{Current: mover[k]}
 				if !(explored[nnPoint.getL()][nnPoint.getN()]) {
 					explored[nnPoint.getL()][nnPoint.getN()] = true
-					newPoint := nPoint
+					newPoint := make([]Point, len(nPoint))
+					copy(newPoint, nPoint)
 					newPoint = append(newPoint, Point{Current: mover[k]})
 					if mover[k] == dest {
 						return newPoint
@@ -162,6 +168,7 @@ func getBishopPath(n, m int, start, dest, obstacle string) []string {
 	}
 	return result
 }
+
 
 func main() {
 	sol := getBishopPath(16, 14, "B1", "K14", "M12")

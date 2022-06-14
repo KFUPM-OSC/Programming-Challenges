@@ -1,0 +1,129 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class hard_level {
+    public static void main(String[] args) throws Exception {
+
+        String start = "";
+        String dest = "";
+        String obstacle = "";
+        int n;
+        int m;
+
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Enter n value: ");
+        n = kb.nextInt();
+        kb.nextLine();
+        System.out.print("Enter m value: ");
+        m = kb.nextInt();
+        kb.nextLine();
+        System.out.print("Enter the start's cordinate: ");
+        start = kb.nextLine().toUpperCase();
+        System.out.print("Enter the destenation's cordinate: ");
+        dest = kb.nextLine().toUpperCase();
+        System.out.print("Enter the obstacle's cordinate: ");
+        obstacle = kb.nextLine().toUpperCase();
+
+        if (start.equals(dest)) {
+            System.out.println("[\"" + start + "\"]");
+            System.exit(0);
+        }
+
+        int startCol = start.charAt(0) - 64;
+        int startRow = Integer.parseInt(start.substring(1));
+        int destCol = dest.charAt(0) - 64;
+        int destRow = Integer.parseInt(dest.substring(1));
+
+        int prevTempCol = 0;
+        int prevTempRow = 0;
+        String move = "";
+        String prevMove = "";
+
+        double colDifference = startCol - destCol;
+        double rowDifference = startRow - destRow;
+        List<String> path = new ArrayList<>();
+        path.add(start);
+
+        while (true) {
+
+            boolean canGoTop = rowDifference <= 0;
+            boolean canGoRight = colDifference <= 0;
+            boolean validCordinate = startCol <= n && startRow <= m;
+
+            if (!validCordinate) {
+                System.out.println("Error: Enter valid inputs");
+                System.exit(0);
+            }
+            prevTempCol = startCol;
+            prevTempRow = startRow;
+            prevMove = move;
+
+            // move one step to top right
+            if (canGoTop && canGoRight && notObstacle(startCol + 1, startRow + 1, obstacle)) {
+
+                startCol++;
+                startRow++;
+                colDifference++;
+                rowDifference++;
+
+                move = "topRight";
+
+            }
+            // move one step to bottom right
+            else if (!canGoTop && canGoRight && notObstacle(startCol + 1, startRow - 1, obstacle)
+                    || !notObstacle(startCol + 1, startRow + 1, obstacle)) {
+                startCol++;
+                startRow--;
+                colDifference++;
+                rowDifference--;
+
+                move = "bottomRight";
+
+            }
+
+            // move one step to top left
+            else if (canGoTop && !canGoRight && notObstacle(startCol - 1, startRow + 1, obstacle)
+                    || !notObstacle(startCol - 1, startRow - 1, obstacle)) {
+
+                startCol--;
+                startRow++;
+                colDifference--;
+                rowDifference++;
+
+                move = "topLeft";
+
+                // move one step to bottom left
+            } else {
+
+                startCol--;
+                startRow--;
+                colDifference--;
+                rowDifference--;
+
+                move = "bottomLeft";
+            }
+
+            if (!prevMove.equals(move) && !prevMove.isEmpty()) {
+
+                path.add(Character.toString(prevTempCol + 64) + prevTempRow);
+            }
+
+            if (colDifference == 0 && rowDifference == 0) {
+
+                path.add(dest);
+                System.out.println(path);
+                kb.close();
+                System.exit(0);
+            }
+
+        }
+
+    }
+
+    // to check if the next cordinate is not obstacle
+    static boolean notObstacle(int tempCol, int tempRow, String obstacle) {
+
+        return !(Character.toString(tempCol + 64) + tempRow).equals(obstacle);
+    }
+}

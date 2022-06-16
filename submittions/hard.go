@@ -20,7 +20,7 @@ func ConvertToNum(s string) int {
 		return ret + 10
 	} else if byt[0] >= 84 && byt[0] < 91 {
 		ret, _ := strconv.Atoi(string((byt[0] - 16 - 20)))
-		return ret
+		return ret + 20
 	}
 	ret, _ := strconv.Atoi(string((byt[0] - 16)))
 	return ret

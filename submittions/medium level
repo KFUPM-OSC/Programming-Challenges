@@ -1,0 +1,134 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class second_level {
+    public static void main(String[] args) throws Exception {
+
+        String start = "";
+        String dest = "";
+
+        int n;
+        int m;
+
+        Scanner kb = new Scanner(System.in);
+        System.out.print("Enter n value: ");
+        n = kb.nextInt();
+        kb.nextLine();
+        System.out.print("Enter m value: ");
+        m = kb.nextInt();
+        kb.nextLine();
+        System.out.print("Enter the start's cordinate: ");
+        start = kb.nextLine().toUpperCase();
+        System.out.print("Enter the destenation's cordinate: ");
+        dest = kb.nextLine().toUpperCase();
+
+        if (start.equals(dest)) {
+            System.out.println("[\"" + start + "\"]");
+            System.exit(0);
+        }
+
+        int startCol = start.charAt(0) - 64;
+
+        int startRow = Integer.parseInt(start.substring(1));
+
+        int destCol = dest.charAt(0) - 64;
+        int destRow = Integer.parseInt(dest.substring(1));
+
+        boolean exceedMaxCol = startCol > n || destCol > n;
+        boolean exceedMaxRow = startRow > m || destRow > m;
+        boolean notReachable = (startCol + startRow + destCol + destRow) % 2 != 0;
+
+        if (exceedMaxCol || exceedMaxRow || notReachable) {
+            System.out.println("Error: Enter valid inputs");
+            System.exit(0);
+        }
+
+        int prevTempCol = 0;
+        int prevTempRow = 0;
+        String move = "";
+        String prevMove = "";
+
+        double colDifference = startCol - destCol;
+        double rowDifference = startRow - destRow;
+        List<String> path = new ArrayList<>();
+        path.add(start);
+
+        while (true) {
+
+            boolean canGoTop = rowDifference <= 0;
+            boolean canGoRight = colDifference <= 0;
+            // boolean validCordinate = startCol <= n && startRow <= m;
+
+            prevTempCol = startCol;
+            prevTempRow = startRow;
+            prevMove = move;
+
+            // move one step to top right
+            if (canGoTop && canGoRight
+                    && isValidCordinate(startCol + 1, startRow + 1, n, m)) {
+
+                startCol++;
+                startRow++;
+                colDifference++;
+                rowDifference++;
+
+                move = "topRight";
+
+            }
+            // move one step to bottom right
+            else if (!canGoTop && canGoRight
+                    || !isValidCordinate(startCol + 1, startRow + 1, n, m)) {
+                startCol++;
+                startRow--;
+                colDifference++;
+                rowDifference--;
+
+                move = "bottomRight";
+
+            }
+
+            // move one step to top left
+            else if (canGoTop && !canGoRight
+                    && isValidCordinate(startCol - 1, startRow + 1, n, m)) {
+
+                startCol--;
+                startRow++;
+                colDifference--;
+                rowDifference++;
+
+                move = "topLeft";
+
+                // move one step to bottom left
+            } else {
+
+                startCol--;
+                startRow--;
+                colDifference--;
+                rowDifference--;
+
+                move = "bottomLeft";
+            }
+
+            if (!prevMove.equals(move) && !prevMove.isEmpty()) {
+
+                path.add(Character.toString(prevTempCol + 64) + prevTempRow);
+            }
+
+            if (colDifference == 0 && rowDifference == 0) {
+
+                path.add(dest);
+                System.out.println(path);
+                kb.close();
+                System.exit(0);
+            }
+
+        }
+
+    }
+
+    static boolean isValidCordinate(int tempCol, int tempRow, int n, int m) {
+
+        return tempCol <= n && tempRow <= m;
+    }
+}

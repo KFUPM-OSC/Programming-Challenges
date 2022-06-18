@@ -1,11 +1,10 @@
-﻿
+
+using System;
+using System.Collections.Generic;
 namespace Bishop
 {
     class med
     {
-        /* my monkey brain brute forced this code, haven't checked it but it worked for the provided case
-         * so i would like to see it break for other cases too if possible
-         */
         public static void Main(String[] args)
         {
             String start;
@@ -13,12 +12,11 @@ namespace Bishop
             String[] path;
             start = "F1";
             dest = "K14";
-            path = getBishopPath(16,14,start, dest);
-            
+            path = getBishopPath(16, 14, start, dest);
             Console.Write("{");
             foreach (String move in path)
             {
-                if (move != path[path.Length - 1])
+                if (move != path[path.Length-1])
                 {
                     Console.Write(move + ",");
                 }
@@ -32,131 +30,103 @@ namespace Bishop
 
         public static String[] getBishopPath(int n, int m, String start, String dest)
         {
-            if (dest == start)
-            {
-                String[] outList = { start };
-                return outList;
-            }
-            String[] pathList = AllPossiblePaths(n,m,start,dest);
-            if (pathList != null && pathList.Contains(dest))
-            {
-                String[] outList = { start, dest };
-                return outList;
+                var previous = new Dictionary<String, String>();
+                var visited = new List<String>();
+                bool[,] adj = AdjList(n, m);
+                var queue = new Queue<String>();
+                int[] destEncode = Encoder(dest);
 
-            }
-            if (pathList != null && !pathList.Contains(dest))
-            {
-                List<String[]> checkedP = new List<String[]>();
-                foreach (String path in pathList)
-                {
-                    String[] startPath = { start };
-                    checkedP.Add(getBishopPathRec(n, m, path, dest, startPath));
-
-                        if (!checkedP.Contains(getBishopPathRec(n, m, path, dest, startPath)))
-                        {
-                            checkedP.Add(getBishopPathRec(n, m, path, dest, startPath));
-                        }
-                  
-                }
-                checkedP.Reverse();
-                return checkedP.MinBy(p => p.Length);
-            }
-            return null;
-
-        }
-        public static String[] getBishopPathRec(int n, int m, String start, String dest, String[] prevpath)
-        {
-            String[] pathList = AllPossiblePaths(n,m,start,dest);
-            if (pathList != null && pathList.Contains(dest))
-            {
-                String[] prevpathRec = new string[prevpath.Length + 2];
-                for (int i = 0; i < prevpath.Length; i++)
-                {
-                    prevpathRec[i] = prevpath[i];
-                }
-                prevpathRec[prevpathRec.Length - 2] = start;
-                prevpathRec[prevpathRec.Length - 1] = dest;
-                return prevpathRec;
-            }
-            if (pathList != null && !pathList.Contains(dest))
-            {
-                String[] prevpathRec = new string[prevpath.Length + 1];
-                for (int i = 0; i < prevpath.Length; i++)
+                List<String[]> paths = new List<string[]>();
+                queue.Enqueue(start);
+                while (queue.Count > 0)
                 {
 
-                    prevpathRec[i] = prevpath[i];
-                }
-                prevpathRec[prevpathRec.Length - 1] = start;
-                foreach (String path in pathList)
-                {
-                    if (!prevpathRec.Contains(path))
+                    var vx = queue.Dequeue();
+
+                    var evx = Encoder(vx);
+                    if (adj[evx[0], evx[1]] == true)
                     {
-                       return getBishopPathRec(n, m, path, dest, prevpathRec);
-  
+                        continue;
+                    }
+                    adj[evx[0], evx[1]] = true;
+                    visited.Add(vx);
+                    String[] neigbhors = pMoves(n, m, vx);
+                    foreach (String neigbhor in neigbhors)
+                    {
+                        var evx2 = Encoder(neigbhor);
+                        if (previous.ContainsKey(neigbhor))
+                        {
+                            continue;
+                        }
+                        if (adj[evx2[0], evx2[1]] == false)
+                        {
+                            previous[neigbhor] = vx;
+                            queue.Enqueue(neigbhor);
+                        }
                     }
                 }
+               var path = new List<String> { };
 
-            }
-            return null;
+               var current = dest;
+               while (!current.Equals(start))
+                    {
+                        path.Add(current);
+                        current = previous[current];
+                    }
+
+               path.Add(start);
+               path.Reverse();
+
+               return path.ToArray();
+                
+
 
         }
 
-        private static String[] AllPossiblePaths(int n, int m,String start, String dest)
+
+        public static String[] pMoves (int n, int m, String s)
         {
-            List<String> solvedLetters = new List<String>();
-            int[] encodedStart = Encoder(start);
+            int[] encodedStart = Encoder(s);
             int currentColunm = encodedStart[0];
 
             int currentRow = encodedStart[1];
-
-            int[] encodeddest = Encoder(dest);
-            int destColunm = encodeddest[0];
-
-            int destRow = encodeddest[1];
-
-
-            //  if they have the same slope, then a bishop can move in it's direction
-            if (currentRow-currentColunm == destRow - destColunm) return new string[] {start,dest};
-            if (currentRow + currentColunm == destRow + destColunm) return new string[] { start, dest };                 
-            
-            // diagonal movement is done by switching the letter and the number by increments and decrements of 1 
+            List<String> solvedLetters = new List<String>();
             int j = currentRow;
             int k = currentRow;
             int l = currentRow;
             int c = currentRow;
-            int listIterator = 0;
+ 
             for (int i = currentColunm + 1; i <= n && j < m; i++) //bottom right
             {
                 j++;
-                solvedLetters.Add( decoder(i) + "" + j + "");
-                listIterator++;
+                solvedLetters.Add(decoder(i) + "" + j + "");
+  
             }
-            for (int i = currentColunm - 1; i>0 && k>1; i--) // top left
+            for (int i = currentColunm - 1; i > 0 && k > 1; i--) // top left
             {
                 k--;
 
                 solvedLetters.Add(decoder(i) + "" + k + "");
-                listIterator++;
+
 
             }
 
-            for (int i = currentColunm + 1; i <= n && l >1; i++) //top right
-            {             
+            for (int i = currentColunm + 1; i <= n && l > 1; i++) //top right
+            {
                 l--;
 
-                solvedLetters.Add(decoder(i) + "" + l + "")  ;
-                listIterator++;
+                solvedLetters.Add(decoder(i) + "" + l + "");
+
             }
 
-            for (int i = currentColunm - 1; i >0 && c < m; i--)// bottom left
-            {    
+            for (int i = currentColunm - 1; i > 0 && c < m; i--)// bottom left
+            {
                 c++;
                 solvedLetters.Add(decoder(i) + "" + c + "");
-                listIterator++;
-                
+
+
             }
             return solvedLetters.ToArray();
-
 
         }
         public static int[] Encoder(String s)
@@ -264,6 +234,43 @@ namespace Bishop
             }
             return "invalid";
         }
+        public static Boolean contains(String[] list,String item)
+        {
+           foreach (String item2 in list)
+            {
+                if (item2.Equals(item))
+                    return true;
+            }
+           return false;
+        }
+        public static String[] MinByLen(List<String[]> l)
+        {
+            String[] returner=l[0];
+            foreach(String[] l2 in l)
+            {
+                if (l2.Length < returner.Length)
+                {
+                    returner = l2;
+                }
+            }
+            return returner;
+        }
+        public static bool[,] AdjList(int n,int m)
+        {
+            bool[,] List = new bool[n+1,m+1];
+           
+            for (int i=1; i<n; i++)
+            {
+                for (int j = 1; j < m; j++)
+                {
+                    List[i,j] = false;
+                }
+            }
+            return List;
+        }
+     
+        
+
     }
 }
 

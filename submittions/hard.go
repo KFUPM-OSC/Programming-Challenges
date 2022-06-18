@@ -10,7 +10,6 @@ import (
 
 // Solution : Get all diagonal moves for each start and dest, the common element should be the solution
 
-
 // using ASCII to convert between chars and numbers
 func ConvertToNum(s string) int {
 	// 49 = 1, 65 = A -- subtract 16
@@ -66,8 +65,14 @@ func GetDiagonalMoves(Current string, n, m int, obstacle string) []string {
 	poss := []string{"F", "S", "T", "R"}
 	numOfC := n
 	numOfR := m
+	mx := func() int {
+		if numOfC > numOfR {
+			return numOfC
+		}
+		return numOfR
+	}()
 	for currentc := range poss {
-		for i := 1; i <= numOfC; i++ {
+		for i := 1; i <= mx; i++ {
 			i2 := 0 // Columns - Letters
 			i3 := 0 // ROWS
 			if poss[currentc] == "F" || poss[currentc] == "S" {
@@ -107,7 +112,7 @@ func findCommonElements(l1, l2 []string) []string {
 	return ret
 }
 
-func getBishopPath(n, m int, start, dest, obstacle string) []string {
+func getBishopPath(m, n int, start, dest, obstacle string) []string {
 	mov1 := GetDiagonalMoves(start, n, m, obstacle)
 	mov2 := GetDiagonalMoves(dest, n, m, obstacle)
 	moves := findCommonElements(mov1, mov2)
@@ -169,11 +174,7 @@ func getBishopPath(n, m int, start, dest, obstacle string) []string {
 	return result
 }
 
-
 func main() {
-	sol := getBishopPath(16, 14, "B1", "K14", "M12")
+	sol := getBishopPath(2, 26, "A1", "D2", "A2")
 	fmt.Println(sol)
 }
-
-// OutPut := [B1 C2 A4 K14]
-// :=)

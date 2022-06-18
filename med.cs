@@ -234,27 +234,6 @@ namespace Bishop
             }
             return "invalid";
         }
-        public static Boolean contains(String[] list,String item)
-        {
-           foreach (String item2 in list)
-            {
-                if (item2.Equals(item))
-                    return true;
-            }
-           return false;
-        }
-        public static String[] MinByLen(List<String[]> l)
-        {
-            String[] returner=l[0];
-            foreach(String[] l2 in l)
-            {
-                if (l2.Length < returner.Length)
-                {
-                    returner = l2;
-                }
-            }
-            return returner;
-        }
         public static bool[,] AdjList(int n,int m)
         {
             bool[,] List = new bool[n+1,m+1];

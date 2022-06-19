@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // Solution : Get all diagonal moves for each start and dest, the common element should be the solution
@@ -113,20 +111,6 @@ func findCommonElements(l1, l2 []string) []string {
 }
 
 func getBishopPath(m, n int, start, dest, obstacle string) []string {
-	mov1 := GetDiagonalMoves(start, n, m, obstacle)
-	mov2 := GetDiagonalMoves(dest, n, m, obstacle)
-	moves := findCommonElements(mov1, mov2)
-	// Easy level
-	if len(moves) > 1 {
-		rand.Seed(time.Now().UnixNano()) // for random
-		fmt.Printf("%v Possible moves %v\n", len(moves), moves)
-		return []string{start, moves[rand.Intn(len(moves))], dest}
-	} else if len(moves) == 1 {
-		return []string{start, moves[0], dest}
-	}
-	//  End of easy level solution ^^
-	// we need to find a new path
-	// move to a Point that is also diagonal with the dest
 	// med & hard
 	// Solution: loop through all the diagonal places and check if it is leading to the destination
 	// Add the unexplored place and keep searching through its diagonals until we get to the destination or we lose track
@@ -175,6 +159,6 @@ func getBishopPath(m, n int, start, dest, obstacle string) []string {
 }
 
 func main() {
-	sol := getBishopPath(2, 26, "A1", "D2", "A2")
+	sol := getBishopPath(5, 26, "A1", "B2", "A2")
 	fmt.Println(sol)
 }

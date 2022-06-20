@@ -116,6 +116,9 @@ func getBishopPath(m, n int, start, dest, obstacle string) []string {
 	// Add the unexplored place and keep searching through its diagonals until we get to the destination or we lose track
 	sol := func() []Point {
 		sPoint := Point{Current: start}
+		if dest == start {
+			return []Point{sPoint}
+		}
 		explored := make(map[int]map[int]bool)
 		for i := 0; i < n+1; i++ {
 			explored[i] = make(map[int]bool)
